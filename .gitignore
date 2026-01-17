@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+test-temp/
+test-temp-edge/
+test-temp-large/
+coverage/
+.specstory/

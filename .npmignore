@@ -1,0 +1,10 @@
+src/
+coverage/
+test-temp*/
+*.test.ts
+vitest.config.ts
+tsconfig.json
+.DS_Store
+.specstory/
+.gitignore
+server.json

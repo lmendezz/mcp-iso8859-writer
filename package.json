@@ -1,0 +1,57 @@
+{
+  "name": "mcp-iso8859-writer",
+  "version": "1.0.0",
+  "description": "MCP server for writing files in ISO-8859-1 encoding. Plug and play for legacy codebases.",
+  "mcpName": "io.github.lmendezz/mcp-iso8859-writer",
+  "main": "dist/index.js",
+  "bin": {
+    "mcp-iso8859-writer": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmendezz/mcp-iso8859-writer.git"
+  },
+  "author": "lmendezz",
+  "homepage": "https://github.com/lmendezz/mcp-iso8859-writer#readme",
+  "bugs": {
+    "url": "https://github.com/lmendezz/mcp-iso8859-writer/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.2",
+    "iconv-lite": "^0.6.3",
+    "write-file-atomic": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.8",
+    "@types/write-file-atomic": "^4.0.3",
+    "@vitest/coverage-v8": "^4.0.17",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
+  },
+  "keywords": [
+    "mcp",
+    "iso-8859-1",
+    "encoding",
+    "legacy",
+    "claude",
+    "model-context-protocol",
+    "latin1"
+  ],
+  "license": "MIT"
+}
