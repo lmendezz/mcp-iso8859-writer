@@ -11,7 +11,7 @@ async function main() {
 
         const server = new McpServer({
             name: 'mcp-iso8859-writer',
-            version: '1.0.0'
+            version: '0.1.0'
         });
 
         server.registerTool(

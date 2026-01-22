@@ -1,6 +1,6 @@
 {
   "name": "mcp-iso8859-writer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "MCP server for writing files in ISO-8859-1 encoding. Plug and play for legacy codebases.",
   "mcpName": "io.github.lmendezz/mcp-iso8859-writer",
   "main": "dist/index.js",
