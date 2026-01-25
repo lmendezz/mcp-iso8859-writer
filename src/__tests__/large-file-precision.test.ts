@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { handleWriteFileIso, handleEditFileIso, handleReadFileIso } from '../handlers.js';
-import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
+import { existsSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 
-const TEST_DIR = join(process.cwd(), 'test-temp-large');
+const TEST_DIR = join(process.cwd(), '.mcp-iso8859-writer', 'test-temp-large');
 
 beforeEach(() => {
     if (!existsSync(TEST_DIR)) {
@@ -13,14 +13,11 @@ beforeEach(() => {
 
 afterEach(() => {
     if (existsSync(TEST_DIR)) {
-        const files = readdirSync(TEST_DIR);
-        files.forEach(file => {
-            const filePath = join(TEST_DIR, file);
-            try {
-                unlinkSync(filePath);
-            } catch (err) {
-            }
-        });
+        rmSync(TEST_DIR, { recursive: true, force: true });
+    }
+    const backupDir = join(process.cwd(), '.mcp-iso8859-writer', 'test-temp-large', '.mcp-iso8859-writer');
+    if (existsSync(backupDir)) {
+        rmSync(backupDir, { recursive: true, force: true });
     }
 });
 

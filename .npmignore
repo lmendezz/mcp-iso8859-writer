@@ -1,6 +1,5 @@
 src/
 coverage/
-test-temp*/
 *.test.ts
 vitest.config.ts
 tsconfig.json
@@ -8,3 +7,4 @@ tsconfig.json
 .specstory/
 .gitignore
 server.json
+.mcp-iso8859-writer/

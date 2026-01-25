@@ -1,4 +1,5 @@
-import { readFileSync, copyFileSync } from 'fs';
+import { readFileSync, copyFileSync, mkdirSync, existsSync } from 'fs';
+import { dirname, join } from 'path';
 import { EOL } from 'os';
 import * as iconv from 'iconv-lite';
 import { logger } from './logger.js';
@@ -15,7 +16,14 @@ export function detectLineEnding(content: string): string {
 
 // Creates timestamped backup of file before modification
 export function createBackup(filePath: string): string {
-    const backupPath = `${filePath}.backup.${Date.now()}`;
+    const backupDir = join(dirname(filePath), '.mcp-iso8859-writer');
+
+    if (!existsSync(backupDir)) {
+        mkdirSync(backupDir, { recursive: true });
+    }
+
+    const fileName = filePath.split('/').pop();
+    const backupPath = join(backupDir, `${fileName}.backup.${Date.now()}`);
     copyFileSync(filePath, backupPath);
     logger.info(`Backup created: ${backupPath}`);
     return backupPath;

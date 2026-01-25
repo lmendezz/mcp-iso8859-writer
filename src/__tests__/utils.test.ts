@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { detectLineEnding, createBackup, verifyEncoding } from '../utils.js';
-import { writeFileSync, unlinkSync, existsSync, readFileSync } from 'fs';
+import { writeFileSync, unlinkSync, existsSync, readFileSync, rmSync } from 'fs';
 import * as iconv from 'iconv-lite';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -39,13 +39,17 @@ describe('createBackup', () => {
 
     afterEach(() => {
         if (existsSync(testFile)) unlinkSync(testFile);
-        if (backupPath && existsSync(backupPath)) unlinkSync(backupPath);
+        const backupDir = join(tmpdir(), '.mcp-iso8859-writer');
+        if (existsSync(backupDir)) {
+            rmSync(backupDir, { recursive: true, force: true });
+        }
     });
 
     it('should create backup with timestamp', () => {
         backupPath = createBackup(testFile);
         expect(existsSync(backupPath)).toBe(true);
         expect(backupPath).toContain('.backup.');
+        expect(backupPath).toContain('.mcp-iso8859-writer');
     });
 
     it('should preserve file content', () => {

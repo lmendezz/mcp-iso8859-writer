@@ -1,5 +1,7 @@
 # ISO-8859-1 File Writer MCP
 
+[![npm version](https://badge.fury.io/js/mcp-iso8859-writer.svg)](https://www.npmjs.com/package/mcp-iso8859-writer)
+
 MCP server for writing files in ISO-8859-1 encoding. Designed for legacy codebases that require ISO-8859-1 instead of UTF-8.
 
 ## The Problem

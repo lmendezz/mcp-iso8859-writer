@@ -2,13 +2,13 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
   "name": "io.github.lmendezz/mcp-iso8859-writer",
   "description": "MCP server for writing files in ISO-8859-1 encoding. Plug and play for legacy codebases.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "transport": "stdio",
   "packages": [
     {
       "registry_type": "npm",
       "identifier": "mcp-iso8859-writer",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "transport": {
         "type": "stdio"
       }
