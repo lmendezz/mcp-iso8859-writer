@@ -5,3 +5,4 @@ dist/
 coverage/
 .specstory/
 .mcp-iso8859-writer/
+.claude

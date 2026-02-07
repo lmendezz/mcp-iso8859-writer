@@ -1,5 +1,5 @@
 import { readFileSync, copyFileSync, mkdirSync, existsSync } from 'fs';
-import { dirname, join } from 'path';
+import { dirname, join, basename, relative, resolve } from 'path';
 import { EOL } from 'os';
 import * as iconv from 'iconv-lite';
 import { logger } from './logger.js';
@@ -14,15 +14,32 @@ export function detectLineEnding(content: string): string {
     return EOL;
 }
 
-// Creates timestamped backup of file before modification
+function getBackupRoot(): string {
+    if (process.env.MCP_ISO_BACKUP_ROOT) {
+        return resolve(process.env.MCP_ISO_BACKUP_ROOT);
+    }
+    return process.cwd();
+}
+
 export function createBackup(filePath: string): string {
-    const backupDir = join(dirname(filePath), '.mcp-iso8859-writer');
+    const projectRoot = getBackupRoot();
+    const backupBaseDir = join(projectRoot, '.mcp-iso8859-writer');
+
+    const relativePath = relative(projectRoot, filePath);
+    const relativeDir = dirname(relativePath);
+
+    let backupDir: string;
+    if (relativeDir === '.' || relativePath.startsWith('..')) {
+        backupDir = join(backupBaseDir, 'external');
+    } else {
+        backupDir = join(backupBaseDir, relativeDir);
+    }
 
     if (!existsSync(backupDir)) {
         mkdirSync(backupDir, { recursive: true });
     }
 
-    const fileName = filePath.split('/').pop();
+    const fileName = basename(filePath);
     const backupPath = join(backupDir, `${fileName}.backup.${Date.now()}`);
     copyFileSync(filePath, backupPath);
     logger.info(`Backup created: ${backupPath}`);

@@ -4,21 +4,25 @@ import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import * as iconv from 'iconv-lite';
 
-const TEST_DIR = join(process.cwd(), '.mcp-iso8859-writer', 'test-temp-edge');
+const TEST_ROOT = join(process.cwd(), `.mcp-iso8859-writer-edge-${process.pid}`);
+const TEST_DIR = join(TEST_ROOT, 'test-temp-edge');
+const originalBackupRoot = process.env.MCP_ISO_BACKUP_ROOT;
 
 beforeEach(() => {
+    process.env.MCP_ISO_BACKUP_ROOT = TEST_ROOT;
     if (!existsSync(TEST_DIR)) {
         mkdirSync(TEST_DIR, { recursive: true });
     }
 });
 
 afterEach(() => {
-    if (existsSync(TEST_DIR)) {
-        rmSync(TEST_DIR, { recursive: true, force: true });
+    if (originalBackupRoot === undefined) {
+        delete process.env.MCP_ISO_BACKUP_ROOT;
+    } else {
+        process.env.MCP_ISO_BACKUP_ROOT = originalBackupRoot;
     }
-    const backupDir = join(process.cwd(), '.mcp-iso8859-writer', 'test-temp-edge', '.mcp-iso8859-writer');
-    if (existsSync(backupDir)) {
-        rmSync(backupDir, { recursive: true, force: true });
+    if (existsSync(TEST_ROOT)) {
+        rmSync(TEST_ROOT, { recursive: true, force: true });
     }
 });
 

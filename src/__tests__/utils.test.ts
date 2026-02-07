@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { detectLineEnding, createBackup, verifyEncoding } from '../utils.js';
-import { writeFileSync, unlinkSync, existsSync, readFileSync, rmSync } from 'fs';
+import { writeFileSync, unlinkSync, existsSync, readFileSync, rmSync, mkdirSync } from 'fs';
 import * as iconv from 'iconv-lite';
 import { tmpdir } from 'os';
-import { join } from 'path';
+import { join, basename } from 'path';
 
 describe('detectLineEnding', () => {
     it('should detect CRLF', () => {
@@ -31,17 +31,25 @@ describe('detectLineEnding', () => {
 describe('createBackup', () => {
     let testFile: string;
     let backupPath: string;
+    let testRoot: string;
+    const originalEnv = process.env.MCP_ISO_BACKUP_ROOT;
 
     beforeEach(() => {
-        testFile = join(tmpdir(), `test-${Date.now()}.txt`);
+        testRoot = join(tmpdir(), `backup-test-${Date.now()}`);
+        mkdirSync(testRoot, { recursive: true });
+        process.env.MCP_ISO_BACKUP_ROOT = testRoot;
+        testFile = join(testRoot, `test-${Date.now()}.txt`);
         writeFileSync(testFile, 'test content');
     });
 
     afterEach(() => {
-        if (existsSync(testFile)) unlinkSync(testFile);
-        const backupDir = join(tmpdir(), '.mcp-iso8859-writer');
-        if (existsSync(backupDir)) {
-            rmSync(backupDir, { recursive: true, force: true });
+        if (originalEnv === undefined) {
+            delete process.env.MCP_ISO_BACKUP_ROOT;
+        } else {
+            process.env.MCP_ISO_BACKUP_ROOT = originalEnv;
+        }
+        if (existsSync(testRoot)) {
+            rmSync(testRoot, { recursive: true, force: true });
         }
     });
 
@@ -57,6 +65,38 @@ describe('createBackup', () => {
         const original = readFileSync(testFile, 'utf-8');
         const backup = readFileSync(backupPath, 'utf-8');
         expect(backup).toBe(original);
+    });
+
+    it('should correctly extract filename using basename (cross-platform)', () => {
+        backupPath = createBackup(testFile);
+        const expectedFileName = basename(testFile);
+        expect(backupPath).toContain(expectedFileName);
+    });
+
+    it('should use MCP_ISO_BACKUP_ROOT for centralized backups', () => {
+        backupPath = createBackup(testFile);
+        expect(backupPath.startsWith(testRoot)).toBe(true);
+        expect(backupPath).toContain(join(testRoot, '.mcp-iso8859-writer'));
+    });
+
+    it('should preserve directory structure within backup', () => {
+        const subDir = join(testRoot, 'src', 'config');
+        mkdirSync(subDir, { recursive: true });
+        const nestedFile = join(subDir, 'settings.txt');
+        writeFileSync(nestedFile, 'nested content');
+
+        backupPath = createBackup(nestedFile);
+        expect(backupPath).toContain(join('.mcp-iso8859-writer', 'src', 'config'));
+    });
+
+    it('should place external files in external directory', () => {
+        const externalFile = join(tmpdir(), `external-${Date.now()}.txt`);
+        writeFileSync(externalFile, 'external content');
+
+        backupPath = createBackup(externalFile);
+        expect(backupPath).toContain(join('.mcp-iso8859-writer', 'external'));
+
+        unlinkSync(externalFile);
     });
 });
 

@@ -46,6 +46,26 @@ By default, the MCP can write to any absolute path. To restrict operations to a 
 }
 ```
 
+### Optional: Customize backup location
+
+Backups are stored in a centralized `.mcp-iso8859-writer/` directory. By default, this is created in the current working directory. To specify a custom location:
+
+```json
+{
+  "mcpServers": {
+    "iso-writer": {
+      "command": "npx",
+      "args": ["-y", "mcp-iso8859-writer"],
+      "env": {
+        "MCP_ISO_BACKUP_ROOT": "/path/to/project"
+      }
+    }
+  }
+}
+```
+
+The backup system preserves directory structure within the backup folder.
+
 ## Tools
 
 ### `write_file_iso`

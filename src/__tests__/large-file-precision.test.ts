@@ -3,21 +3,25 @@ import { handleWriteFileIso, handleEditFileIso, handleReadFileIso } from '../han
 import { existsSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 
-const TEST_DIR = join(process.cwd(), '.mcp-iso8859-writer', 'test-temp-large');
+const TEST_ROOT = join(process.cwd(), `.mcp-iso8859-writer-large-${process.pid}`);
+const TEST_DIR = join(TEST_ROOT, 'test-temp-large');
+const originalBackupRoot = process.env.MCP_ISO_BACKUP_ROOT;
 
 beforeEach(() => {
+    process.env.MCP_ISO_BACKUP_ROOT = TEST_ROOT;
     if (!existsSync(TEST_DIR)) {
         mkdirSync(TEST_DIR, { recursive: true });
     }
 });
 
 afterEach(() => {
-    if (existsSync(TEST_DIR)) {
-        rmSync(TEST_DIR, { recursive: true, force: true });
+    if (originalBackupRoot === undefined) {
+        delete process.env.MCP_ISO_BACKUP_ROOT;
+    } else {
+        process.env.MCP_ISO_BACKUP_ROOT = originalBackupRoot;
     }
-    const backupDir = join(process.cwd(), '.mcp-iso8859-writer', 'test-temp-large', '.mcp-iso8859-writer');
-    if (existsSync(backupDir)) {
-        rmSync(backupDir, { recursive: true, force: true });
+    if (existsSync(TEST_ROOT)) {
+        rmSync(TEST_ROOT, { recursive: true, force: true });
     }
 });
 
